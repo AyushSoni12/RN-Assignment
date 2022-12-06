@@ -6,13 +6,9 @@ import { image, color, sheet, COUNTRIES } from "./../../constants";
 import { Status } from "../../utilities";
 
 const Main = () => {
-  // const australia = new Date().toLocaleTimeString("en-US", { timeZone: "Australia/Sydney" });
-  // const uk = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/London' })
-
-  const [date, setDate] = useState(new Date().toLocaleTimeString());
+  const [date, setDate] = useState();
   const [hours, setHours] = useState(new Date().getHours())
-  const [show, setShow] = useState(false)
-  const [selectedCountry, setSelectedCountry] = useState()
+  const [selectedCountry, setSelectedCountry] = useState(1)
 
   useEffect(() => {
     let time = setInterval(() => {
@@ -20,10 +16,25 @@ const Main = () => {
     }, 1000)
 
     return () => clearInterval(time);
-  }, []);
+  }, [selectedCountry]);
+
 
   const updateDate = () => {
-    setDate(new Date().toLocaleTimeString())
+    if (selectedCountry === 1) {
+      setDate(new Date().toLocaleTimeString())
+    }
+    else if (selectedCountry === 2) {
+      setDate(new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York" }))
+    }
+    else if (selectedCountry === 3) {
+      setDate(new Date().toLocaleTimeString("en-US", { timeZone: "Australia/Sydney" }))
+    }
+    else if (selectedCountry === 4) {
+      setDate(new Date().toLocaleTimeString("en-US", { timeZone: "Africa/Johannesburg" }))
+    }
+    else {
+      setDate(new Date().toLocaleTimeString("en-US", { timeZone: `Europe/London` }))
+    }
   }
 
   const wall = (hours) => {
@@ -41,32 +52,18 @@ const Main = () => {
     }
   }
 
-
-  const showModal = () => {
-    const renderItem = ({ item }) => {
-      return (
-        <TouchableOpacity onPress={ () => setSelectedCountry(item.id) } style={ selectedCountry === item.id ? styles.activeStripe : styles.stripe }>
-          <Text>{ item.country }</Text>
-        </TouchableOpacity>
-      )
+  const renderItem = ({ item }) => {
+    const selectCountry = () => {
+      setSelectedCountry(item.id)
     }
     return (
-      <Modal
-        animationType={ "fade" }
-        transparent={ true }
-        visible={ show }
-        onRequestClose={ () => { console.log("Modal has been closed.") } }>
-        <View onStartShouldSetResponder={ () => setShow(false) } style={ { flex: 1, backgroundColor: '#0000007d', justifyContent: 'flex-end' } }>
-          <View style={ { backgroundColor: color.white, padding: 16, margin: 16, borderRadius: 7 } }>
-            <FlatList
-              data={ COUNTRIES }
-              renderItem={ renderItem }
-            />
-          </View>
-        </View>
-      </Modal >
+      <TouchableOpacity onPress={ selectCountry } style={ styles.country }>
+        <Image style={ styles.flag } source={ item.flag } />
+        <Text style={ { color: item.id === selectedCountry ? color.white : color.black } }>{ item.country }</Text>
+      </TouchableOpacity>
     )
   }
+
 
   return (
     <View style={ sheet.container }>
@@ -74,14 +71,8 @@ const Main = () => {
       <ImageBackground style={ sheet.container } source={ wall(hours) }>
         <View style={ styles.timeView }>
           <Text style={ styles.date }>{ date }</Text>
-          <TouchableOpacity onPress={ () => {
-            console.log("Hello")
-            setShow(true)
-          } }>
-            <Image style={ styles.globe } source={ image.GLOBE } />
-          </TouchableOpacity>
         </View>
-        { show && showModal() }
+        <FlatList data={ COUNTRIES } renderItem={ renderItem } />
       </ImageBackground>
     </View>
   )

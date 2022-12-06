@@ -13,11 +13,6 @@ export const styles = StyleSheet.create({
     color: color.white,
     fontStyle: 'italic',
   },
-  globe: {
-    tintColor: color.white,
-    width: 40,
-    height: 40
-  },
   stripe: {
     backgroundColor: color.white,
     padding: 12
@@ -25,5 +20,16 @@ export const styles = StyleSheet.create({
   activeStripe: {
     backgroundColor: 'lightgrey',
     padding: 12
-  }
+  },
+  country: {
+    marginBottom: 10,
+    width: 75,
+    alignItems: 'center'
+  },
+  flag: {
+    width: 45,
+    height: 45
+  },
+
+
 })
