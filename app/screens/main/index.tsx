@@ -7,12 +7,15 @@ import { Status } from "../../utilities";
 
 const Main = () => {
   const [date, setDate] = useState();
-  const [hours, setHours] = useState(new Date().getHours())
   const [selectedCountry, setSelectedCountry] = useState(1)
+  const [hours, setHours] = useState(new Date().getHours())
+
+
 
   useEffect(() => {
     let time = setInterval(() => {
       updateDate()
+
     }, 1000)
 
     return () => clearInterval(time);
@@ -21,19 +24,19 @@ const Main = () => {
 
   const updateDate = () => {
     if (selectedCountry === 1) {
-      setDate(new Date().toLocaleTimeString())
+      setDate(new Date().toLocaleString("en-US", { hour12: false }))
     }
     else if (selectedCountry === 2) {
-      setDate(new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York" }))
+      setDate(new Date().toLocaleString("en-US", { timeZone: "America/New_York", hour12: false }))
     }
     else if (selectedCountry === 3) {
-      setDate(new Date().toLocaleTimeString("en-US", { timeZone: "Australia/Sydney" }))
+      setDate(new Date().toLocaleString("en-US", { timeZone: "Australia/Sydney", hour12: false }))
     }
     else if (selectedCountry === 4) {
-      setDate(new Date().toLocaleTimeString("en-US", { timeZone: "Africa/Johannesburg" }))
+      setDate(new Date().toLocaleString("en-US", { timeZone: "Africa/Johannesburg", hour12: false }))
     }
     else {
-      setDate(new Date().toLocaleTimeString("en-US", { timeZone: `Europe/London` }))
+      setDate(new Date().toLocaleString("en-US", { timeZone: `Europe/London`, hour12: false }))
     }
   }
 
