@@ -1,4 +1,5 @@
-import * as Image from './image'
+import * as image from './image'
 export * from './color'
+export * from './constant'
 export * from './stylesheet'
-export { Image }
+export { image }

@@ -1,41 +1,87 @@
 import React, { useState, useEffect } from "react";
-import { ImageBackground, SafeAreaView, Text, StatusBar, View } from 'react-native'
+import { ImageBackground, Text, View, Image, TouchableOpacity, Modal, FlatList } from 'react-native'
+
+import { styles } from "./styles";
+import { image, color, sheet, COUNTRIES } from "./../../constants";
 import { Status } from "../../utilities";
 
-import { Image, color, sheet } from "./../../constants";
-import { styles } from "./styles";
-
 const Main = () => {
+  // const australia = new Date().toLocaleTimeString("en-US", { timeZone: "Australia/Sydney" });
+  // const uk = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/London' })
+
   const [date, setDate] = useState(new Date().toLocaleTimeString());
   const [hours, setHours] = useState(new Date().getHours())
+  const [show, setShow] = useState(false)
+  const [selectedCountry, setSelectedCountry] = useState()
+
   useEffect(() => {
     let time = setInterval(() => {
-      setDate(new Date().toLocaleTimeString())
+      updateDate()
     }, 1000)
 
     return () => clearInterval(time);
   }, []);
 
+  const updateDate = () => {
+    setDate(new Date().toLocaleTimeString())
+  }
+
   const wall = (hours) => {
     if (hours > 5 && hours < 12) {
-      return Image.MORNING
+      return image.MORNING
     }
     else if (hours >= 12 && hours < 17) {
-      return Image.AFTER_NOON
+      return image.AFTER_NOON
     }
     else if (hours >= 17 && hours < 20) {
-      return Image.EVENING
+      return image.EVENING
     }
     else {
-      return Image.NIGHT
+      return image.NIGHT
     }
+  }
+
+
+  const showModal = () => {
+    const renderItem = ({ item }) => {
+      return (
+        <TouchableOpacity onPress={ () => setSelectedCountry(item.id) } style={ selectedCountry === item.id ? styles.activeStripe : styles.stripe }>
+          <Text>{ item.country }</Text>
+        </TouchableOpacity>
+      )
+    }
+    return (
+      <Modal
+        animationType={ "fade" }
+        transparent={ true }
+        visible={ show }
+        onRequestClose={ () => { console.log("Modal has been closed.") } }>
+        <View onStartShouldSetResponder={ () => setShow(false) } style={ { flex: 1, backgroundColor: '#0000007d', justifyContent: 'flex-end' } }>
+          <View style={ { backgroundColor: color.white, padding: 16, margin: 16, borderRadius: 7 } }>
+            <FlatList
+              data={ COUNTRIES }
+              renderItem={ renderItem }
+            />
+          </View>
+        </View>
+      </Modal >
+    )
   }
 
   return (
     <View style={ sheet.container }>
       { Status() }
       <ImageBackground style={ sheet.container } source={ wall(hours) }>
-        <Text style={ styles.date }>{ date }</Text>
+        <View style={ styles.timeView }>
+          <Text style={ styles.date }>{ date }</Text>
+          <TouchableOpacity onPress={ () => {
+            console.log("Hello")
+            setShow(true)
+          } }>
+            <Image style={ styles.globe } source={ image.GLOBE } />
+          </TouchableOpacity>
+        </View>
+        { show && showModal() }
       </ImageBackground>
     </View>
   )
