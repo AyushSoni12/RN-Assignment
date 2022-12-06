@@ -6,7 +6,7 @@ import { image, color, sheet, COUNTRIES } from "./../../constants";
 import { Status } from "../../utilities";
 
 const Main = () => {
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(new Date().toLocaleString("en-US", { hour12: false }))
   const [selectedCountry, setSelectedCountry] = useState(1)
   const [hours, setHours] = useState(new Date().getHours())
 
@@ -15,33 +15,42 @@ const Main = () => {
   useEffect(() => {
     let time = setInterval(() => {
       updateDate()
-
     }, 1000)
 
     return () => clearInterval(time);
   }, [selectedCountry]);
 
 
+  const localString = (timezone) => {
+    const time = new Date().toLocaleString("en-US", { timeZone: `${timezone}`, hour12: false })
+    const lastIndex = time.lastIndexOf(",") + 2;
+    const sliceTime = time.slice(lastIndex, lastIndex + 2)
+    const finalTime = sliceTime[0] == 0 ? sliceTime.slice(-1) : sliceTime
+    setHours(+finalTime)
+    return time
+  }
+
+
   const updateDate = () => {
     if (selectedCountry === 1) {
-      setDate(new Date().toLocaleString("en-US", { hour12: false }))
+      setDate(localString('Asia/Kolkata'))
     }
     else if (selectedCountry === 2) {
-      setDate(new Date().toLocaleString("en-US", { timeZone: "America/New_York", hour12: false }))
+      setDate(localString("America/New_York"))
     }
     else if (selectedCountry === 3) {
-      setDate(new Date().toLocaleString("en-US", { timeZone: "Australia/Sydney", hour12: false }))
+      setDate(localString("Australia/Sydney"))
     }
     else if (selectedCountry === 4) {
-      setDate(new Date().toLocaleString("en-US", { timeZone: "Africa/Johannesburg", hour12: false }))
+      setDate(localString("Africa/Johannesburg"))
     }
     else {
-      setDate(new Date().toLocaleString("en-US", { timeZone: `Europe/London`, hour12: false }))
+      setDate(localString(`Europe/London`))
     }
   }
 
   const wall = (hours) => {
-    if (hours > 5 && hours < 12) {
+    if (hours >= 5 && hours < 12) {
       return image.MORNING
     }
     else if (hours >= 12 && hours < 17) {
